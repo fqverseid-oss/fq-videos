@@ -429,16 +429,20 @@ const CAPS = [
   [77.4, 79.4, 'Raka membeku.'], [80.2, 82.7, 'Kalau kamu jadi Raka, kamu pilih apa?'],
   [110.45, 111.0, 'Oh iya.'], [111.1, 114.2, 'Penasaran gimana video seperti ini dibuat, cuma dari HP?'], [114.4, 116.6, 'Semua caranya ada di File Sakti.'], [116.7, 117.8, 'Link di bio.'],
 ];
+/* Zona aman Reels: atas (<260px) dan bawah (>1300px) tertutup UI Instagram, kanan (>930px) tertutup tombol. Subtitle di tengah-bawah. */
+const SUB_Y = 1235, SUB_W = 800;
 function caption(t) {
   if (!SUBS) return;
   for (const [a, b, str] of CAPS) {
     if (t < a || t > b) continue;
     const k = Math.min(prog(t, a, a + 0.2), 1 - prog(t, b - 0.15, b));
-    const font = `italic 58px ${SERIF}`; const lines = wrapLines(str, font, 920); const y0 = 190;
-    X.save(); const g = X.createLinearGradient(0, 0, 0, 380);
-    g.addColorStop(0, 'rgba(5,7,15,0.65)'); g.addColorStop(0.6, 'rgba(5,7,15,0.35)'); g.addColorStop(1, 'rgba(5,7,15,0)');
-    X.globalAlpha = k; X.fillStyle = g; X.fillRect(0, 0, W, 380); X.shadowColor = 'rgba(0,0,0,0.85)'; X.shadowBlur = 16;
-    lines.forEach((ln, i) => text(ln, 540, y0 + i * 68, { font, color: COL.ivory }));
+    const font = `italic 54px ${SERIF}`; const lines = wrapLines(str, font, SUB_W); const lh = 64; const y0 = SUB_Y - (lines.length - 1) * lh / 2;
+    X.save(); X.globalAlpha = k;
+    const g = X.createLinearGradient(0, y0 - 110, 0, y0 + lines.length * lh + 40);
+    g.addColorStop(0, 'rgba(5,7,15,0)'); g.addColorStop(0.35, 'rgba(5,7,15,0.5)'); g.addColorStop(0.8, 'rgba(5,7,15,0.5)'); g.addColorStop(1, 'rgba(5,7,15,0)');
+    X.fillStyle = g; X.fillRect(0, y0 - 110, W, lines.length * lh + 150);
+    X.shadowColor = 'rgba(0,0,0,0.85)'; X.shadowBlur = 14;
+    lines.forEach((ln, i) => text(ln, 500, y0 + i * lh, { font, color: COL.ivory }));
     X.restore();
   }
 }
